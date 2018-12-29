@@ -3,7 +3,8 @@
 namespace Parser {
 	class Program {
 		static void Main(string[] args) {
-			Console.WriteLine("Hello World!");
+			string text = Console.ReadLine();
+			Console.WriteLine(text);
 		}
 	}
 }
