@@ -18,6 +18,7 @@ namespace Parser {
 		}
 
 		public string[] ReadRows() {
+			ReadCSV();
 			return null;
 		}
 
@@ -27,6 +28,11 @@ namespace Parser {
 		
 		public string[,] ReadTable() {
 			return null;
+		}
+
+		private void ReadCSV() {
+			string text = File.ReadAllText(file, ParserEncoding);
+			Console.WriteLine(text);
 		}
 
 		/* メモ

@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Text;
 
 namespace Parser {
 	class Program {
 		static void Main(string[] args) {
-			string text = Console.ReadLine();
-			Console.WriteLine(text);
+			CSVParser parser = new CSVParser("example.txt", Encoding.UTF8, ',');
+			parser.ReadRows();
+
+			Console.ReadKey();
 		}
 	}
 }
