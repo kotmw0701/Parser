@@ -25,14 +25,28 @@ namespace Parser {
 		public string[] ReadColumns() {
 			return null;
 		}
-		
+
 		public string[,] ReadTable() {
 			return null;
 		}
 
 		private void ReadCSV() {
 			string text = File.ReadAllText(file, ParserEncoding);
-			Console.WriteLine(text);
+			string[] rows = text.Split(Environment.NewLine, StringSplitOptions.None);
+			foreach (string row in rows) {
+				var chars = row.ToCharArray();
+				int fieldCount = 0;
+				bool escapeFlag = false;
+				for (int i = 0; i < chars.Length; i++) {
+					char chara = chars[i];
+					if (chara == '"' || chara == '\\') {
+						if (chars[i + 1] == '"') i++;
+						else escapeFlag = !escapeFlag;
+					} else if (chara == Delimiter && !escapeFlag) {
+						fieldCount++;
+					}
+				}
+			}
 		}
 
 		/* メモ
@@ -41,6 +55,15 @@ namespace Parser {
 		 *   ・パーサークラス(ユーザー各位自作)に自動で入れちゃうパターン
 		 *   
 		 *   ・というかまずファイル名指定じゃなくてStreamReader入れられるようにして自動close(usingで囲むアレ)を使う側で使えるようにする
+		 *   
+		 *   ・ReadAllTextのほうが早いらしい
+		 * 
+		 * 規則
+		 * ・"値"のようにダブルクオートで囲まれた中は全部値になる
+		 * ・改行が含まれる値の改行コードは\n
+		 * ・""値""ダブルクオートのエスケープはダブルクオートを重ねる
+		 * ・バックスラッシュがあった場合は容赦なくその後の文字を値にする
+		 * ・
 		 * 
 		 */
 	}
