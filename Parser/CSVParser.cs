@@ -10,12 +10,9 @@ namespace Parser {
 
 		public Encoding ParserEncoding { get; set; } = Encoding.UTF8;
 		public char Delimiter { get; set; } = ',';
+		public bool LeaveQuote { get; set; } = false;
 
-		public CSVParser(string file, Encoding encoding, char delimiter) {
-			this.file = file;
-			this.ParserEncoding = encoding;
-			this.Delimiter = delimiter;
-		}
+		public CSVParser(string file) => this.file = file;
 
 		public string[] ReadRows() {
 			ReadCSV();
@@ -32,17 +29,20 @@ namespace Parser {
 
 		private void ReadCSV() {
 			string text = File.ReadAllText(file, ParserEncoding);
-			string[] rows = text.Split(Environment.NewLine, StringSplitOptions.None);
-			List<string> fields = new List<string>();
+			string[] rows = text.Split("\r\n", StringSplitOptions.None);
 			foreach (string row in rows) {
 				var chars = row.ToCharArray();
+				List<string> fields = new List<string>();
 				string field = "";
 				bool escapeFlag = false;
 				for (int i = 0; i < chars.Length; i++) {
 					char chara = chars[i];
 					if (chara == '"' || chara == '\\') {
 						if (chars[i + 1] == '"') i++;
-						else escapeFlag = !escapeFlag;
+						else {
+							escapeFlag = !escapeFlag;
+							if (!LeaveQuote) continue;
+						}
 					} else if (chara == Delimiter && !escapeFlag) {
 						fields.Add(field);
 						field = "";
@@ -51,6 +51,37 @@ namespace Parser {
 					field += chara;
 				}
 				Console.WriteLine(string.Join("|", fields));
+			}
+
+		}
+
+		private void Read() {
+			var chars = File.ReadAllText(file, ParserEncoding).ToCharArray();
+			List<List<string>> rows = new List<List<string>>();
+			List<string> fields = new List<string>();
+			string field = "";
+			bool escapeFlag = false;
+			for (int i = 0; i < chars.Length; i++) {
+				char chara = chars[i];
+				if (chara == '"') {
+					if (chars[i + 1] == '"') i++;
+					else {
+						escapeFlag = !escapeFlag;//これだと["テスト""テスト"]のときに動作がおかしくなる，要再考案
+					}
+				}
+				if (!escapeFlag) {
+					if (chara == '\r' && chars[i + 1] == '\n') {
+						rows.Add(fields);
+						fields = new List<string>();
+						continue;
+					}
+					if (chara == Delimiter) {
+						fields.Add(field);
+						field = "";
+						continue;
+					}
+				}
+				field += chara;
 			}
 		}
 
