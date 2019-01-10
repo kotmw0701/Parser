@@ -33,9 +33,10 @@ namespace Parser {
 		private void ReadCSV() {
 			string text = File.ReadAllText(file, ParserEncoding);
 			string[] rows = text.Split(Environment.NewLine, StringSplitOptions.None);
+			List<string> fields = new List<string>();
 			foreach (string row in rows) {
 				var chars = row.ToCharArray();
-				int fieldCount = 0;
+				string field = "";
 				bool escapeFlag = false;
 				for (int i = 0; i < chars.Length; i++) {
 					char chara = chars[i];
@@ -43,9 +44,13 @@ namespace Parser {
 						if (chars[i + 1] == '"') i++;
 						else escapeFlag = !escapeFlag;
 					} else if (chara == Delimiter && !escapeFlag) {
-						fieldCount++;
+						fields.Add(field);
+						field = "";
+						continue;
 					}
+					field += chara;
 				}
+				Console.WriteLine(string.Join("|", fields));
 			}
 		}
 
