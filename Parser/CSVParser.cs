@@ -83,6 +83,9 @@ namespace Parser {
 				}
 				field += chara;
 			}
+			for(int i = 0; i < rows.Count; i++) {
+				parsed[i,0] = fields.ToArray();
+			}
 		}
 
 		/* メモ
