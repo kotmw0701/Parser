@@ -7,6 +7,7 @@ namespace Parser {
 	class CSVParser {
 		private string file = "example.txt";
 		private object[,] parsed;
+		private int rowSize, columnSize;
 
 		public Encoding ParserEncoding { get; set; } = Encoding.UTF8;
 		public char Delimiter { get; set; } = ',';
@@ -73,6 +74,7 @@ namespace Parser {
 					if (chara == '\r' && chars[i + 1] == '\n') {
 						rows.Add(fields);
 						fields = new List<string>();
+						if (fields.Count > columnSize) columnSize = fields.Count;
 						continue;
 					}
 					if (chara == Delimiter) {
@@ -83,8 +85,12 @@ namespace Parser {
 				}
 				field += chara;
 			}
-			for(int i = 0; i < rows.Count; i++) {
-				parsed[i,0] = fields.ToArray();
+			rowSize = rows.Count;
+			parsed = new object[rowSize, columnSize];
+			for (int x = 0; x < parsed.GetLength(0); x++) {
+				for (int y = 0; y < parsed.GetLength(1); y++) {
+					parsed[x, y] = rows[x][y];
+				}
 			}
 		}
 
