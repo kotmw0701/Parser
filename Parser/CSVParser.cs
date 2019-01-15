@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Parser {
 	class CSVParser {
-		private string file = "example.txt";
-		private object[,] parsed;
+		private string file = "example.csv";
+		private string[,] parsed;
 		private int rowSize, columnSize;
 
 		public Encoding ParserEncoding { get; set; } = Encoding.UTF8;
@@ -16,7 +16,13 @@ namespace Parser {
 		public CSVParser(string file) => this.file = file;
 
 		public string[] ReadRows() {
-			ReadCSV();
+			Read();
+			for (int y = 0; y < rowSize; y++) {
+				for (int x = 0; x < columnSize; x++) {
+					Console.Write(parsed[y, x]);
+					if (x == columnSize-1) Console.WriteLine("Last: " + parsed[y, x]);
+				}
+			}
 			return null;
 		}
 
@@ -28,67 +34,37 @@ namespace Parser {
 			return null;
 		}
 
-		private void ReadCSV() {
-			string text = File.ReadAllText(file, ParserEncoding);
-			string[] rows = text.Split("\r\n", StringSplitOptions.None);
-			foreach (string row in rows) {
-				var chars = row.ToCharArray();
-				List<string> fields = new List<string>();
-				string field = "";
-				bool escapeFlag = false;
-				for (int i = 0; i < chars.Length; i++) {
-					char chara = chars[i];
-					if (chara == '"' || chara == '\\') {
-						if (chars[i + 1] == '"') i++;
-						else {
-							escapeFlag = !escapeFlag;
-							if (!LeaveQuote) continue;
-						}
-					} else if (chara == Delimiter && !escapeFlag) {
-						fields.Add(field);
-						field = "";
-						continue;
-					}
-					field += chara;
-				}
-				Console.WriteLine(string.Join("|", fields));
-			}
-
-		}
-
 		private void Read() {
 			var chars = File.ReadAllText(file, ParserEncoding).ToCharArray();
 			List<List<string>> rows = new List<List<string>>();
 			List<string> fields = new List<string>();
-			string field = "";
+			StringBuilder field = new StringBuilder();
 			bool escapeFlag = false;
 			for (int i = 0; i < chars.Length; i++) {
 				char chara = chars[i];
 				if (chara == '"') {
 					if (chars[i + 1] == '"') i++;
-					else {
-						escapeFlag = !escapeFlag;//これだと["テスト""テスト"]のときに動作がおかしくなる，要再考案
-					}
+					else escapeFlag = !escapeFlag;
 				}
 				if (!escapeFlag) {
 					if (chara == '\r' && chars[i + 1] == '\n') {
 						rows.Add(fields);
-						fields = new List<string>();
 						if (fields.Count > columnSize) columnSize = fields.Count;
+						fields = new List<string>();
 						continue;
 					}
 					if (chara == Delimiter) {
-						fields.Add(field);
-						field = "";
+						fields.Add(field.ToString());
+						field = new StringBuilder();
 						continue;
 					}
 				}
-				field += chara;
+				field.Append(chara);
 			}
 			rowSize = rows.Count;
-			parsed = new object[rowSize, columnSize];
-			for (int x = 0; x < parsed.GetLength(0); x++) {
-				for (int y = 0; y < parsed.GetLength(1); y++) {
+			parsed = new string[rowSize, columnSize];
+			for (int x = 0; x < rowSize; x++) {
+				for (int y = 0; y < columnSize; y++) {
 					parsed[x, y] = rows[x][y];
 				}
 			}
@@ -109,6 +85,7 @@ namespace Parser {
 		 * ・""値""ダブルクオートのエスケープはダブルクオートを重ねる
 		 * ・バックスラッシュがあった場合は容赦なくその後の文字を値にする
 		 * ・
+		 * 
 		 * 
 		 */
 	}
