@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Parser {
 	class CSVParser {
@@ -20,7 +22,7 @@ namespace Parser {
 			for (int y = 0; y < rowSize; y++) {
 				for (int x = 0; x < columnSize; x++) {
 					Console.Write(parsed[y, x]);
-					if (x == columnSize-1) Console.WriteLine("Last: " + parsed[y, x]);
+					if (x == (columnSize - 1)) Console.WriteLine();
 				}
 			}
 			return null;
@@ -45,27 +47,30 @@ namespace Parser {
 				if (chara == '"') {
 					if (chars[i + 1] == '"') i++;
 					else escapeFlag = !escapeFlag;
+					if (LeaveQuote) continue;
 				}
 				if (!escapeFlag) {
-					if (chara == '\r' && chars[i + 1] == '\n') {
-						rows.Add(fields);
-						if (fields.Count > columnSize) columnSize = fields.Count;
-						fields = new List<string>();
-						continue;
-					}
-					if (chara == Delimiter) {
+					if ((chara == Delimiter) || (chara == '\r' && chars[i + 1] == '\n')) {
 						fields.Add(field.ToString());
 						field = new StringBuilder();
+						if (chara == '\r') {
+							rows.Add(fields);
+							fields = new List<string>();
+							i++;
+						}
 						continue;
 					}
 				}
 				field.Append(chara);
 			}
+			fields.Add(field.ToString());
+			rows.Add(fields);
 			rowSize = rows.Count;
+			columnSize = rows[0].Count;
 			parsed = new string[rowSize, columnSize];
-			for (int x = 0; x < rowSize; x++) {
-				for (int y = 0; y < columnSize; y++) {
-					parsed[x, y] = rows[x][y];
+			for (int y = 0; y < rowSize; y++) {
+				for (int x = 0; x < columnSize; x++) {
+					parsed[y, x] = rows[y][x];
 				}
 			}
 		}
