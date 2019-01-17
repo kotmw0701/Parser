@@ -8,7 +8,7 @@ using System.Threading;
 namespace Parser {
 	class CSVParser {
 		private string file = "example.csv";
-		private string[,] parsed;
+		private string[][] parsed;
 		private int rowSize, columnSize;
 
 		public Encoding ParserEncoding { get; set; } = Encoding.UTF8;
@@ -19,12 +19,6 @@ namespace Parser {
 
 		public string[] ReadRows() {
 			Read();
-			for (int y = 0; y < rowSize; y++) {
-				for (int x = 0; x < columnSize; x++) {
-					Console.Write(parsed[y, x]);
-					if (x == (columnSize - 1)) Console.WriteLine();
-				}
-			}
 			return null;
 		}
 
@@ -67,10 +61,10 @@ namespace Parser {
 			rows.Add(fields);
 			rowSize = rows.Count;
 			columnSize = rows[0].Count;
-			parsed = new string[rowSize, columnSize];
+			parsed = new string[rowSize][];
 			for (int y = 0; y < rowSize; y++) {
 				for (int x = 0; x < columnSize; x++) {
-					parsed[y, x] = rows[y][x];
+					parsed[y][x] = rows[y][x];
 				}
 			}
 		}
