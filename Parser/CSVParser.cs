@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -17,24 +18,23 @@ namespace Parser {
 
 		public CSVParser(string file) => this.file = file;
 
-		public string[] ReadRows() {
+		public string[][] ReadTable() {
+			List<string> dataList = new List<string>();
+			var sw = new Stopwatch();
+			sw.Start();
 			Read();
-			return null;
-		}
-
-		public string[] ReadColumns() {
-			return null;
-		}
-
-		public string[,] ReadTable() {
+			sw.Stop();
+			Console.WriteLine("----------Readed----------");
+			Console.WriteLine($"{sw.ElapsedMilliseconds} ms");
+			Console.WriteLine("--------------------------");
+			foreach (string[] rows in parsed) Console.WriteLine(string.Join("|", rows));
 			return null;
 		}
 
 		private void Read() {
 			var chars = File.ReadAllText(file, ParserEncoding).ToCharArray();
-			List<List<string>> rows = new List<List<string>>();
-			List<string> fields = new List<string>();
 			StringBuilder field = new StringBuilder();
+			List<string> fields = new List<string>();
 			bool escapeFlag = false;
 			for (int i = 0; i < chars.Length; i++) {
 				char chara = chars[i];
@@ -45,26 +45,31 @@ namespace Parser {
 				}
 				if (!escapeFlag) {
 					if ((chara == Delimiter) || (chara == '\r' && chars[i + 1] == '\n')) {
-						fields.Add(field.ToString());
-						field = new StringBuilder();
+						if (rowSize == 0) columnSize++;
 						if (chara == '\r') {
-							rows.Add(fields);
-							fields = new List<string>();
+							rowSize++;
 							i++;
 						}
+						Console.WriteLine(field);
+						fields.Add(field.ToString());
+						field = new StringBuilder();
 						continue;
 					}
 				}
 				field.Append(chara);
 			}
-			fields.Add(field.ToString());
-			rows.Add(fields);
-			rowSize = rows.Count;
-			columnSize = rows[0].Count;
+			rowSize++;
+			int column = 0, row = 0;
+			Console.WriteLine($"Column : {columnSize}  | Row : {rowSize}");
 			parsed = new string[rowSize][];
-			for (int y = 0; y < rowSize; y++) {
-				for (int x = 0; x < columnSize; x++) {
-					parsed[y][x] = rows[y][x];
+			foreach (string data in fields) {
+				//Console.WriteLine($"Column : {column}  | Row : {row}  | Param : {data}");
+				if (column == 0) parsed[row] = new string[columnSize];
+				parsed[row][column] = data;
+				column++;
+				if (columnSize == column) {
+					row++;
+					column = 0;
 				}
 			}
 		}

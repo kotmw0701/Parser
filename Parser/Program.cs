@@ -9,7 +9,7 @@ namespace Parser {
 				LeaveQuote = true,
 				ParserEncoding = Encoding.UTF8
 			};
-			parser.ReadRows();
+			parser.ReadTable();
 
 			Console.ReadKey();
 		}
