@@ -8,26 +8,18 @@ using System.Threading;
 
 namespace Parser {
 	class CSVParser {
-		private string file = "example.csv";
+		private readonly string file = "";
 		private string[][] parsed;
 		private int rowSize, columnSize;
 
 		public Encoding ParserEncoding { get; set; } = Encoding.UTF8;
 		public char Delimiter { get; set; } = ',';
-		public bool LeaveQuote { get; set; } = false;
+		public bool LeaveQuote { get; set; } = true;
 
 		public CSVParser(string file) => this.file = file;
 
 		public string[][] ReadTable() {
-			List<string> dataList = new List<string>();
-			var sw = new Stopwatch();
-			sw.Start();
 			Read();
-			sw.Stop();
-			Console.WriteLine("----------Readed----------");
-			Console.WriteLine($"{sw.ElapsedMilliseconds} ms");
-			Console.WriteLine("--------------------------");
-			foreach (string[] rows in parsed) Console.WriteLine(string.Join("|", rows));
 			return null;
 		}
 
@@ -50,7 +42,7 @@ namespace Parser {
 							rowSize++;
 							i++;
 						}
-						Console.WriteLine(field);
+						//Console.WriteLine(field);
 						fields.Add(field.ToString());
 						field = new StringBuilder();
 						continue;
@@ -58,12 +50,11 @@ namespace Parser {
 				}
 				field.Append(chara);
 			}
+			fields.Add(field.ToString());
 			rowSize++;
 			int column = 0, row = 0;
-			Console.WriteLine($"Column : {columnSize}  | Row : {rowSize}");
 			parsed = new string[rowSize][];
 			foreach (string data in fields) {
-				//Console.WriteLine($"Column : {column}  | Row : {row}  | Param : {data}");
 				if (column == 0) parsed[row] = new string[columnSize];
 				parsed[row][column] = data;
 				column++;

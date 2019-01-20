@@ -6,7 +6,7 @@ namespace Parser {
 		static void Main(string[] args) {
 			CSVParser parser = new CSVParser("example.csv") {
 				Delimiter = ',',
-				LeaveQuote = true,
+				LeaveQuote = false,
 				ParserEncoding = Encoding.UTF8
 			};
 			parser.ReadTable();
