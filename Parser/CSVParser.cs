@@ -7,16 +7,14 @@ using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace Parser {
-	class CSVParser {
-		private readonly string file = "";
+	class CSVParser : Parser {
 		private string[][] parsed;
 		private int rowSize, columnSize;
-
-		public Encoding ParserEncoding { get; set; } = Encoding.UTF8;
+		
 		public char Delimiter { get; set; } = ',';
 		public bool LeaveQuote { get; set; } = true;
 
-		public CSVParser(string file) => this.file = file;
+		public CSVParser(string file) : base(file) { }
 
 		public string[][] ReadTable() {
 			Read();
