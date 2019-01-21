@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace Parser {
+namespace kotmwParser {
 	class CSVParser : Parser {
 		private string[][] parsed;
 		private int rowSize, columnSize;

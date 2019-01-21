@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Parser {
+namespace kotmwParser {
 	class Program {
 		static void Main(string[] args) {
 			CSVParser parser = new CSVParser("example.csv") {
