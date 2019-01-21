@@ -8,7 +8,7 @@ namespace kotmwParser {
 		public JSONParser(string file) : base(file) {}
 
 		public void Read() {
-			var chars = File.ReadAllText(file, ParserEncoding).ToCharArray();
+			var chars = File.ReadAllText(file, Encoding.UTF8).ToCharArray();
 
 		}
 	}

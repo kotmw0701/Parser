@@ -1,28 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace kotmwParser {
 	class CSVParser : Parser {
 		private string[][] parsed;
 		private int rowSize, columnSize;
+		private CSVConfigure config;
+
+		public CSVParser(string file, CSVConfigure config) : base(file) => this.config = config;	
 		
-		public char Delimiter { get; set; } = ',';
-		public bool LeaveQuote { get; set; } = true;
-
-		public CSVParser(string file) : base(file) { }
-
 		public string[][] ReadTable() {
-			Read();
+			Parse();
 			return null;
 		}
 
-		private void Read() {
-			var chars = File.ReadAllText(file, ParserEncoding).ToCharArray();
+		private void Parse() {
+			var chars = File.ReadAllText(file, config.ParserEncoding).ToCharArray();
 			StringBuilder field = new StringBuilder();
 			List<string> fields = new List<string>();
 			bool escapeFlag = false;
@@ -31,16 +26,15 @@ namespace kotmwParser {
 				if (chara == '"') {
 					if (chars[i + 1] == '"') i++;
 					else escapeFlag = !escapeFlag;
-					if (LeaveQuote) continue;
+					if (config.LeaveQuote) continue;
 				}
 				if (!escapeFlag) {
-					if ((chara == Delimiter) || (chara == '\r' && chars[i + 1] == '\n')) {
+					if ((chara == config.Delimiter) || (chara == '\r' && chars[i + 1] == '\n')) {
 						if (rowSize == 0) columnSize++;
 						if (chara == '\r') {
 							rowSize++;
 							i++;
 						}
-						//Console.WriteLine(field);
 						fields.Add(field.ToString());
 						field = new StringBuilder();
 						continue;
@@ -67,6 +61,7 @@ namespace kotmwParser {
 		 *   実装のパターン
 		 *   ・file名指定の配列で返すパターン
 		 *   ・パーサークラス(ユーザー各位自作)に自動で入れちゃうパターン
+		 *   ・インデクサ使いたい！
 		 *   
 		 *   ・というかまずファイル名指定じゃなくてStreamReader入れられるようにして自動close(usingで囲むアレ)を使う側で使えるようにする
 		 *   
