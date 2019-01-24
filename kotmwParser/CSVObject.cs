@@ -4,6 +4,11 @@ using System.Text;
 
 namespace kotmwParser {
 	class CSVObject {
+		private string[][] parsed;
+		public CSVObject(string[][] data) {
+			parsed = data;
+		}
+
 		public string[] this[string key] {
 			get {
 				return null;

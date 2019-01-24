@@ -4,19 +4,14 @@ using System.IO;
 using System.Text;
 
 namespace kotmwParser {
-	class CSVParser : Parser {
+	class CSVParser {
 		private string[][] parsed;
 		private int rowSize, columnSize;
 		private CSVConfigure config;
 
-		public CSVParser(string file, CSVConfigure config) : base(file) => this.config = config;	
-		
-		public string[][] ReadTable() {
-			Parse();
-			return null;
-		}
-
-		private void Parse() {
+		public static CSVObject Parse(string file, CSVConfigure config) {
+			string[][] parsed;
+			int rowSize = 0, columnSize = 0;
 			var chars = File.ReadAllText(file, config.ParserEncoding).ToCharArray();
 			StringBuilder field = new StringBuilder();
 			List<string> fields = new List<string>();
@@ -55,6 +50,7 @@ namespace kotmwParser {
 					column = 0;
 				}
 			}
+			return new CSVObject(parsed);
 		}
 
 		/* メモ
