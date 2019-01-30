@@ -4,6 +4,9 @@ using System.IO;
 using System.Text;
 
 namespace kotmwParser {
+	/// <summary>
+	/// Jsonパーサーつくりたい
+	/// </summary>
 	class JSONParser : Parser {
 		public JSONParser(string file) : base(file) {}
 

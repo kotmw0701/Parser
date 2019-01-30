@@ -4,6 +4,9 @@ using System.IO;
 using System.Text;
 
 namespace kotmwParser {
+	/// <summary>
+	/// CSVパーサー
+	/// </summary>
 	class CSVParser {
 		private string[][] parsed;
 		private int rowSize, columnSize;
