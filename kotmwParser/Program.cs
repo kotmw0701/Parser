@@ -10,7 +10,7 @@ namespace kotmwParser {
 				LeaveQuote = true,
 				ParserEncoding = Encoding.UTF8
 			});
-
+			foreach (var param in parsed["郵便番号"]) Console.WriteLine(param);
 			Console.ReadKey();
 		}
 	}

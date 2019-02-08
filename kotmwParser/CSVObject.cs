@@ -14,7 +14,7 @@ namespace kotmwParser {
 
 		public string[] this[string key] {
 			get {
-				return null;
+				return parsed[Array.IndexOf(parsed[0], key)];
 			}
 			set {
 
